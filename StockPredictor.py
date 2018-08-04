@@ -59,4 +59,53 @@ def GetStockPrediction(cpy, cutPoint = .8):
     y_test = y[cutOffPoint:]
 
     linear = LinearRegression().fit(X_train, y_train)
+    # print(" Price =", round(linear.coef_[0], 2), "* 3 Days Moving Average", round(linear.coef_[1], 2),
+   #       "* 9 Days Moving Average +", round(linear.intercept_, 2))
+
+    predicted_price = linear.predict(X_test)
+
+    predicted_price = Panda.DataFrame(predicted_price, index=y_test.index, columns=['price'])
+
+    predicted_price.plot(figsize=(10, 5))
+
+    y_test.plot()
+
+    graph.legend(['predicted_price', 'actual_price'])
+
+    if cpy == 'WIKI/AAPL':
+        graph.ylabel("Apple Price")
+        graph.show()
+        print('saving graph')
+        graph.savefig('Applegraph.png')
+    elif cpy == 'EOD/DIS':
+        graph.ylabel('Walt Disney Company Stock Prices')
+        graph.show()
+        print('saving graph')
+        graph.savefig('Disneygraph.png')
+    elif cpy == 'EOD/MSFT':
+        graph.ylabel('Microsoft Corporation (MSFT) Stock Prices')
+        graph.show()
+        print('saving graph')
+        graph.savefig('Microsoftgraph.png')
+    elif cpy == 'EOD/BA':
+        graph.ylabel('Boeing Company (BA) Stock Prices')
+        graph.show()
+        print('saving graph')
+        graph.savefig('Boeinggraph.png')
+
+
+
+    r2_score = linear.score(X[cutOffPoint:], y[cutOffPoint:]) * 100
+
+    print("The R-Squared of the model is: ",float("{0:.2f}".format(r2_score)))
+
+
+# value used to divide dataset
+cutOffPoint = .8
+
+
+print('Please input the company dataset Quadl Code:')
+
+company = input()
+GetStockPrediction(company, cutOffPoint)
 
