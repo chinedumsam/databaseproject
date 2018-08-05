@@ -1,29 +1,31 @@
-# importing the libraries
-import matplotlib
-matplotlib.use('Agg')
+
+
+################ importing the libraries
 import pandas as pd # importing pandas
+import tensorflow as tf
+import statsmodels.api as sm  # importing statsmodel
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd # importing pandas
 import datetime # importing datetime
+from keras import metrics
 
-## importing data downloaded from quandl
-data=pd.read_csv("/home/ubuntu/EOD-AAPL1.csv")
+############### importing data downloaded from quandl
+data=pd.read_csv("sti.csv")
 data['Date']=pd.to_datetime(data['Date']) # converting to date
 data=data.sort_values("Date") # sorting on basis of date
 data=data.reset_index(drop=True) # resetting index
 data.head()
 
-# plotting using matplotlib
+##### plotting using matplotlib
 from matplotlib import pyplot as plt
 data1=data[["Date","Adj_Close"]] # making a dataframe from data and adjusted closing price
 data1.set_index("Date",inplace=True)
 plt.plot(data1,c='green')
 plt.xlabel('date')
 plt.show()
-
-
-
+print('saving graph')
+plt.savefig('pic1')
 ########### creating training and test set
 size_train=round(0.7*len(data))
 date=data['Date']
@@ -40,15 +42,15 @@ from keras.models import Sequential
 from keras.layers import Dense
 model = Sequential()
 # adding the first layer
-model.add(Dense(units = 10, activation = 'relu', input_dim = 1))
+model.add(Dense(output_dim = 10,  activation = 'relu', input_dim = 1))
 # Adding the second hidden layer
-model.add(Dense(units= 1,activation = 'relu'))
+model.add(Dense(output_dim = 1,activation = 'relu'))
 # Adding the output layer
-model.compile(optimizer = 'adam', loss = 'mean_squared_error')
+model.compile(optimizer = 'adam', loss = 'mean_squared_error',metrics = ['mape'])
 model.summary()
 
 ### fitting the model
-model.fit(train, y_train, batch_size = 10, epochs = 20)
+model.fit(train, y_train, batch_size = 10, nb_epoch = 20)
 
 ######### predicting on the test set
 predicted=model.predict(test)
@@ -67,7 +69,7 @@ plt.xlabel("date")
 plt.ylabel("price")
 plt.show()
 print('saving graph')
-plt.savefig('microsoft1.png')
+plt.savefig('pic2')
 
 #########printing the entire predicted vs test data 
 print(test_and_predicted)
